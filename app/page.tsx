@@ -1,28 +1,58 @@
 'use client';
-import { recipes } from "../utils/sampleData";
+import { useState } from 'react';
 
-export default function HomePage() {
+export default function UploadPage() {
+  const [form, setForm] = useState({
+    title: '',
+    videoUrl: '',
+    thumbnail: '',
+    chef: '',
+    chefImage: '',
+    duration: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const saved = JSON.parse(localStorage.getItem("cookverse_recipes") || "[]");
+    const updated = [...saved, form];
+    localStorage.setItem("cookverse_recipes", JSON.stringify(updated));
+    alert("✅ Recipe uploaded! Now go back to homepage to see it.");
+    setForm({
+      title: '',
+      videoUrl: '',
+      thumbnail: '',
+      chef: '',
+      chefImage: '',
+      duration: '',
+    });
+  };
+
   return (
-    <main style={{ padding: '2rem' }}>
-      <h1>🍳 Welcome to Cookverse</h1>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-        {recipes.map((r, i) => (
-          <div key={i} style={{
-            border: '1px solid #ccc',
-            borderRadius: 10,
-            padding: '1rem',
-            width: 240,
-            background: '#fff'
-          }}>
-            <img src={r.thumbnail} alt={r.title} style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 6 }} />
-            <h2 style={{ marginTop: '1rem' }}>{r.title}</h2>
-            <div style={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
-              <img src={r.chefImage} alt={r.chef} style={{ width: 32, height: 32, borderRadius: '50%', marginRight: 8 }} />
-              <p>{r.chef} • {r.duration}</p>
-            </div>
-          </div>
+    <main style={{ maxWidth: 800, margin: '2rem auto' }}>
+      <h1>Upload Recipe</h1>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {[
+          ['Recipe Title', 'title'],
+          ['Video URL', 'videoUrl'],
+          ['Thumbnail Image URL', 'thumbnail'],
+          ['Chef Name', 'chef'],
+          ['Chef Image URL', 'chefImage'],
+          ['Cooking Duration (e.g., 10:30)', 'duration'],
+        ].map(([label, name]) => (
+          <label key={name}>
+            {label}
+            <input name={name} value={form[name]} onChange={handleChange} style={{ width: '100%' }} />
+          </label>
         ))}
-      </div>
+        <button type="submit" style={{ backgroundColor: '#FF5A28', color: 'white', padding: 10, border: 'none' }}>
+          Upload Recipe
+        </button>
+      </form>
     </main>
   );
 }
