@@ -4,7 +4,16 @@ import { recipes } from "../../../utils/sampleData";
 
 export default function RecipeDetailPage() {
   const { id } = useParams();
-  const recipe = recipes[parseInt(id)];
+const recipeIndex = parseInt(id);
+if (isNaN(recipeIndex)) {
+  return <div style={{ padding: '2rem' }}><h1>Invalid recipe ID</h1></div>;
+}
+
+const recipe = recipes[recipeIndex];
+if (!recipe) {
+  return <div style={{ padding: '2rem' }}><h1>Recipe not found.</h1></div>;
+}
+
 
   if (!recipe) {
     return <div style={{ padding: '2rem' }}><h1>Recipe not found.</h1></div>;
